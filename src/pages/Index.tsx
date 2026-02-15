@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import FlipClock from "@/components/FlipClock";
 import CountdownTimer from "@/components/CountdownTimer";
+import PomodoroTimer from "@/components/PomodoroTimer";
 import NavBar from "@/components/NavBar";
 import SettingsPanel from "@/components/SettingsPanel";
 import { Routes, Route, useLocation } from "react-router-dom";
@@ -43,6 +44,7 @@ const Index = () => {
           <Route path="/" element={<FlipClock />} />
           <Route path="/countdown" element={<CountdownTimer initialTime={getCountdownParams()} />} />
           <Route path="/countdown/:time" element={<CountdownTimer initialTime={getCountdownParams()} />} />
+          <Route path="/pomodoro" element={<PomodoroTimer />} />
           <Route path="/about" element={<About />} />
           <Route path="/themes" element={<Themes />} />
         </Routes>

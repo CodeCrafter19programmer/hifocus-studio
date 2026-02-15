@@ -1,4 +1,4 @@
-import { Clock, Timer, Settings, Maximize, Info, Palette } from "lucide-react";
+import { Clock, Timer, Settings, Maximize, Info, Palette, Brain } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface NavBarProps {
@@ -13,6 +13,7 @@ const NavBar = ({ onSettingsClick, onFullscreen }: NavBarProps) => {
   const links = [
     { path: "/", icon: Clock, label: "Clock" },
     { path: "/countdown", icon: Timer, label: "Countdown" },
+    { path: "/pomodoro", icon: Brain, label: "Pomodoro" },
     { path: "/themes", icon: Palette, label: "Themes" },
     { path: "/about", icon: Info, label: "About" },
   ];
