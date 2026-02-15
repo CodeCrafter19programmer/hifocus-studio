@@ -3,11 +3,13 @@ import FlipCard from "./FlipCard";
 import { Play, Pause, RotateCcw, Minus, Plus } from "lucide-react";
 
 const PomodoroTimer = () => {
-  const [duration, setDuration] = useState(25); // minutes
+  const [duration, setDuration] = useState(25);
   const [remaining, setRemaining] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const totalSeconds = duration * 60;
 
@@ -27,6 +29,22 @@ const PomodoroTimer = () => {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
+  }, [isRunning]);
+
+  // Auto-hide controls when running
+  useEffect(() => {
+    if (isRunning) {
+      hideTimerRef.current = setTimeout(() => setControlsVisible(false), 3000);
+    } else {
+      setControlsVisible(true);
+    }
+    return () => { if (hideTimerRef.current) clearTimeout(hideTimerRef.current); };
+  }, [isRunning, controlsVisible]);
+
+  const handleContainerClick = useCallback((e: React.MouseEvent) => {
+    if (!isRunning) return;
+    e.stopPropagation();
+    setControlsVisible((v) => !v);
   }, [isRunning]);
 
   const start = useCallback(() => {
@@ -62,12 +80,12 @@ const PomodoroTimer = () => {
   const progress = totalSeconds > 0 ? ((totalSeconds - remaining) / totalSeconds) * 100 : 0;
 
   return (
-    <div className="flex flex-col items-center gap-8 animate-fade-in">
+    <div className="flex flex-col items-center gap-8 animate-fade-in" onClick={handleContainerClick}>
       {/* Duration adjuster */}
       {!isRunning && remaining === totalSeconds && !isComplete && (
         <div className="flex items-center gap-4">
           <button
-            onClick={() => adjustDuration(-1)}
+            onClick={(e) => { e.stopPropagation(); adjustDuration(-1); }}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-all hover:scale-110 hover:text-foreground active:scale-95"
           >
             <Minus className="h-4 w-4" />
@@ -76,7 +94,7 @@ const PomodoroTimer = () => {
             {duration}<span className="ml-1 text-lg text-muted-foreground">min</span>
           </span>
           <button
-            onClick={() => adjustDuration(1)}
+            onClick={(e) => { e.stopPropagation(); adjustDuration(1); }}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-all hover:scale-110 hover:text-foreground active:scale-95"
           >
             <Plus className="h-4 w-4" />
@@ -104,18 +122,18 @@ const PomodoroTimer = () => {
         />
       </div>
 
-      {/* Controls */}
-      <div className="flex items-center gap-4">
+      {/* Controls - hide when running and controlsVisible is false */}
+      <div className={`flex items-center gap-4 transition-all duration-500 ${controlsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"}`}>
         {!isRunning ? (
           <button
-            onClick={start}
+            onClick={(e) => { e.stopPropagation(); start(); }}
             className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-110 active:scale-95"
           >
             <Play className="ml-0.5 h-6 w-6" />
           </button>
         ) : (
           <button
-            onClick={pause}
+            onClick={(e) => { e.stopPropagation(); pause(); }}
             className="flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-transform hover:scale-110 active:scale-95"
           >
             <Pause className="h-6 w-6" />
@@ -123,7 +141,7 @@ const PomodoroTimer = () => {
         )}
 
         <button
-          onClick={reset}
+          onClick={(e) => { e.stopPropagation(); reset(); }}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-all hover:scale-110 hover:text-foreground active:scale-95"
         >
           <RotateCcw className="h-4 w-4" />
