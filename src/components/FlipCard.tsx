@@ -30,9 +30,9 @@ const FlipCard = ({ value, size = "lg" }: FlipCardProps) => {
   }, [value]);
 
   const sizeMap = {
-    sm: { outer: "h-16 w-12 sm:h-20 sm:w-14", text: "text-3xl sm:text-4xl leading-[4rem] sm:leading-[5rem]" },
-    md: { outer: "h-20 w-14 sm:h-28 sm:w-20 md:h-32 md:w-24", text: "text-4xl sm:text-5xl md:text-6xl leading-[5rem] sm:leading-[7rem] md:leading-[8rem]" },
-    lg: { outer: "h-24 w-16 sm:h-36 sm:w-24 md:h-44 md:w-32 lg:h-56 lg:w-40", text: "text-4xl sm:text-6xl md:text-8xl lg:text-9xl leading-[6rem] sm:leading-[9rem] md:leading-[11rem] lg:leading-[14rem]" },
+    sm: { outer: "h-16 w-12 sm:h-20 sm:w-14 md:h-28 md:w-20", text: "text-3xl sm:text-4xl md:text-6xl leading-[4rem] sm:leading-[5rem] md:leading-[7rem]" },
+    md: { outer: "h-20 w-14 sm:h-32 sm:w-22 md:h-44 md:w-32 lg:h-52 lg:w-36", text: "text-4xl sm:text-6xl md:text-8xl lg:text-9xl leading-[5rem] sm:leading-[8rem] md:leading-[11rem] lg:leading-[13rem]" },
+    lg: { outer: "h-28 w-20 sm:h-40 sm:w-28 md:h-52 md:w-36 lg:h-[17rem] lg:w-48", text: "text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] leading-[7rem] sm:leading-[10rem] md:leading-[13rem] lg:leading-[17rem]" },
   };
 
   const { outer, text } = sizeMap[size];
