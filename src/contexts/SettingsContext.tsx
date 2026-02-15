@@ -1,10 +1,13 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import type { SoundId } from "@/lib/sounds";
 
 export interface Settings {
   is24Hour: boolean;
   showSeconds: boolean;
   showDate: boolean;
   theme: "midnight" | "espresso" | "denim" | "coral" | "vintage" | "emerald" | "industrial";
+  alertSound: SoundId;
+  hourlyChime: boolean;
 }
 
 const defaultSettings: Settings = {
@@ -12,6 +15,8 @@ const defaultSettings: Settings = {
   showSeconds: true,
   showDate: true,
   theme: "midnight",
+  alertSound: "chime",
+  hourlyChime: true,
 };
 
 interface SettingsContextType {
