@@ -1,4 +1,5 @@
 import { useSettings } from "@/contexts/SettingsContext";
+import { themes } from "@/lib/themes";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
@@ -8,13 +9,6 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
-const themes = [
-  { id: "midnight" as const, label: "Midnight", color: "bg-[hsl(0,0%,4%)]" },
-  { id: "charcoal" as const, label: "Charcoal", color: "bg-[hsl(0,0%,12%)]" },
-  { id: "navy" as const, label: "Navy", color: "bg-[hsl(220,40%,8%)]" },
-  { id: "forest" as const, label: "Forest", color: "bg-[hsl(150,30%,6%)]" },
-];
-
 const SettingsPanel = ({ open, onClose }: SettingsPanelProps) => {
   const { settings, updateSettings } = useSettings();
 
@@ -23,7 +17,7 @@ const SettingsPanel = ({ open, onClose }: SettingsPanelProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-fade-in"
+        className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-fade-in max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-6 flex items-center justify-between">
@@ -51,7 +45,7 @@ const SettingsPanel = ({ open, onClose }: SettingsPanelProps) => {
           {/* Theme */}
           <section className="space-y-4">
             <h3 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Theme</h3>
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {themes.map((t) => (
                 <button
                   key={t.id}
@@ -60,8 +54,17 @@ const SettingsPanel = ({ open, onClose }: SettingsPanelProps) => {
                     settings.theme === t.id ? "border-primary" : "border-transparent hover:border-border"
                   }`}
                 >
-                  <div className={`h-8 w-8 rounded-full ${t.color} ring-1 ring-border`} />
-                  <span className="text-xs text-muted-foreground">{t.label}</span>
+                  {/* 3-color swatch */}
+                  <div className="flex gap-0.5">
+                    {t.swatches.map((c, i) => (
+                      <div
+                        key={i}
+                        className="h-6 w-6 first:rounded-l-md last:rounded-r-md ring-1 ring-black/10"
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-[10px] text-muted-foreground leading-tight">{t.label}</span>
                 </button>
               ))}
             </div>

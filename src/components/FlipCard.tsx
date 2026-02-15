@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import { useSettings } from "@/contexts/SettingsContext";
+import { getTheme } from "@/lib/themes";
 
 interface FlipCardProps {
   value: string;
@@ -11,6 +13,8 @@ const FlipCard = ({ value, size = "lg" }: FlipCardProps) => {
   const [flipping, setFlipping] = useState(false);
   const mounted = useRef(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const { settings } = useSettings();
+  const theme = getTheme(settings.theme);
 
   useEffect(() => {
     if (!mounted.current) {
@@ -38,13 +42,47 @@ const FlipCard = ({ value, size = "lg" }: FlipCardProps) => {
   const { outer, text } = sizeMap[size];
   const baseTextClass = `font-mono font-bold text-digit-foreground ${text} text-center w-full`;
 
-  // Renders a half of a digit card
+  // Theme-specific overlays
+  const effectOverlay = () => {
+    if (theme.cardEffect === "stripes") {
+      return (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 opacity-[0.12]"
+          style={{
+            backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 3px, currentColor 3px, currentColor 4px)",
+          }}
+        />
+      );
+    }
+    if (theme.cardEffect === "texture") {
+      return (
+        <div
+          className="pointer-events-none absolute inset-0 z-10 opacity-[0.06]"
+          style={{
+            backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
+            backgroundSize: "4px 4px",
+          }}
+        />
+      );
+    }
+    if (theme.cardEffect === "glossy") {
+      return (
+        <div
+          className="pointer-events-none absolute inset-0 z-10"
+          style={{
+            background: "linear-gradient(to bottom, hsla(0,0%,100%,0.12) 0%, transparent 50%, hsla(0,0%,0%,0.08) 100%)",
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
   const Half = ({ digit, half, className = "", style = {} }: { digit: string; half: "top" | "bottom"; className?: string; style?: React.CSSProperties }) => (
     <div
       className={`absolute inset-x-0 ${half === "top" ? "top-0 rounded-t-lg" : "bottom-0 rounded-b-lg"} h-1/2 overflow-hidden bg-digit ${className}`}
       style={style}
     >
-      {/* Full-height container positioned so the correct half is visible */}
       <div
         className={baseTextClass}
         style={{
@@ -65,12 +103,10 @@ const FlipCard = ({ value, size = "lg" }: FlipCardProps) => {
 
   return (
     <div className={`relative ${outer} select-none`} style={{ perspective: "600px" }}>
-      {/* Static top: shows new when not flipping, prev when flipping */}
+      {effectOverlay()}
       <Half digit={flipping ? previous : current} half="top" />
-      {/* Static bottom: always shows current (new) */}
       <Half digit={current} half="bottom" />
 
-      {/* Animated top flap (falls away showing previous) */}
       {flipping && (
         <Half
           digit={previous}
@@ -80,7 +116,6 @@ const FlipCard = ({ value, size = "lg" }: FlipCardProps) => {
         />
       )}
 
-      {/* Animated bottom flap (reveals new) */}
       {flipping && (
         <Half
           digit={value}
@@ -94,7 +129,6 @@ const FlipCard = ({ value, size = "lg" }: FlipCardProps) => {
         />
       )}
 
-      {/* Center divider */}
       <div className="absolute inset-x-0 top-1/2 z-30 h-[2px] -translate-y-[1px] bg-background/40" />
     </div>
   );

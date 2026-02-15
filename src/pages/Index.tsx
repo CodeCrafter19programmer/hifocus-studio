@@ -5,8 +5,11 @@ import NavBar from "@/components/NavBar";
 import SettingsPanel from "@/components/SettingsPanel";
 import { Routes, Route, useLocation } from "react-router-dom";
 import About from "./About";
+import Themes from "./Themes";
+import { useThemeApply } from "@/hooks/useThemeApply";
 
 const Index = () => {
+  useThemeApply();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const location = useLocation();
 
@@ -41,6 +44,7 @@ const Index = () => {
           <Route path="/countdown" element={<CountdownTimer initialTime={getCountdownParams()} />} />
           <Route path="/countdown/:time" element={<CountdownTimer initialTime={getCountdownParams()} />} />
           <Route path="/about" element={<About />} />
+          <Route path="/themes" element={<Themes />} />
         </Routes>
       </main>
 

@@ -4,7 +4,7 @@ export interface Settings {
   is24Hour: boolean;
   showSeconds: boolean;
   showDate: boolean;
-  theme: "midnight" | "charcoal" | "navy" | "forest";
+  theme: "midnight" | "espresso" | "denim" | "coral" | "vintage" | "emerald" | "industrial";
 }
 
 const defaultSettings: Settings = {
