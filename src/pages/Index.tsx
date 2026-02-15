@@ -58,7 +58,8 @@ const Index = () => {
       onClick={handleScreenTap}
     >
       <div
-        className={`transition-all duration-500 ${chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"}`}
+        className={`fixed left-0 right-0 top-0 z-40 transition-all duration-500 ${chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"}`}
+        onClick={(e) => e.stopPropagation()}
       >
         <NavBar
           onSettingsClick={() => { setSettingsOpen(true); setChromeVisible(true); }}
@@ -66,7 +67,7 @@ const Index = () => {
         />
       </div>
 
-      <main className="flex flex-1 items-center justify-center px-4">
+      <main className={`flex flex-1 items-center justify-center px-4 w-full ${!isTimerRoute ? "pt-20" : ""}`}>
         <Routes>
           <Route path="/" element={<FlipClock />} />
           <Route path="/countdown" element={<CountdownTimer initialTime={getCountdownParams()} />} />
