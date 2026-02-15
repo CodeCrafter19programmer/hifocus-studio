@@ -1,8 +1,9 @@
 import { useSettings } from "@/contexts/SettingsContext";
 import { themes } from "@/lib/themes";
+import { soundOptions, previewSound } from "@/lib/sounds";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { X } from "lucide-react";
+import { X, Volume2 } from "lucide-react";
 
 interface SettingsPanelProps {
   open: boolean;
@@ -54,7 +55,6 @@ const SettingsPanel = ({ open, onClose }: SettingsPanelProps) => {
                     settings.theme === t.id ? "border-primary" : "border-transparent hover:border-border"
                   }`}
                 >
-                  {/* 3-color swatch */}
                   <div className="flex gap-0.5">
                     {t.swatches.map((c, i) => (
                       <div
@@ -67,6 +67,34 @@ const SettingsPanel = ({ open, onClose }: SettingsPanelProps) => {
                   <span className="text-[10px] text-muted-foreground leading-tight">{t.label}</span>
                 </button>
               ))}
+            </div>
+          </section>
+
+          {/* Sounds */}
+          <section className="space-y-4">
+            <h3 className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Sounds</h3>
+            <SettingRow label="Hourly Chime">
+              <Switch checked={settings.hourlyChime} onCheckedChange={(v) => updateSettings({ hourlyChime: v })} />
+            </SettingRow>
+            <div>
+              <Label className="text-sm text-secondary-foreground mb-2 block">Alert Sound</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {soundOptions.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      updateSettings({ alertSound: s.id });
+                      if (s.id !== "none") previewSound(s.id);
+                    }}
+                    className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2 text-xs transition-all ${
+                      settings.alertSound === s.id ? "border-primary bg-primary/10" : "border-transparent bg-secondary hover:border-border"
+                    }`}
+                  >
+                    {s.id !== "none" && <Volume2 className="h-3 w-3 text-muted-foreground" />}
+                    <span className="text-secondary-foreground">{s.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </section>
         </div>

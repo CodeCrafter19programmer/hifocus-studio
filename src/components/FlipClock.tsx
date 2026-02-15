@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import FlipCard from "./FlipCard";
 import { useSettings } from "@/contexts/SettingsContext";
+import { playSound } from "@/lib/sounds";
 
 const FlipClock = () => {
   const { settings } = useSettings();
@@ -8,10 +9,20 @@ const FlipClock = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
+  const prevMinuteRef = useRef<number | null>(null);
+
   useEffect(() => {
-    const interval = setInterval(() => setTime(new Date()), 1000);
+    const interval = setInterval(() => {
+      const now = new Date();
+      setTime(now);
+      // Hourly chime: trigger when minutes go from 59 to 0
+      if (settings.hourlyChime && prevMinuteRef.current === 59 && now.getMinutes() === 0) {
+        playSound(settings.alertSound);
+      }
+      prevMinuteRef.current = now.getMinutes();
+    }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [settings.hourlyChime, settings.alertSound]);
 
   // Auto-scale to fit viewport width
   useLayoutEffect(() => {

@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import FlipCard from "./FlipCard";
+import { useSettings } from "@/contexts/SettingsContext";
+import { playSound } from "@/lib/sounds";
 import { Play, Pause, RotateCcw, Minus, Plus } from "lucide-react";
 
 const PomodoroTimer = () => {
+  const { settings } = useSettings();
   const [duration, setDuration] = useState(25);
   const [remaining, setRemaining] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
@@ -20,6 +23,7 @@ const PomodoroTimer = () => {
           if (prev <= 1) {
             setIsRunning(false);
             setIsComplete(true);
+            playSound(settings.alertSound);
             return 0;
           }
           return prev - 1;
