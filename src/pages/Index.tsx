@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import FlipClock from "@/components/FlipClock";
 import CountdownTimer from "@/components/CountdownTimer";
 import PomodoroTimer from "@/components/PomodoroTimer";
@@ -12,7 +12,27 @@ import { useThemeApply } from "@/hooks/useThemeApply";
 const Index = () => {
   useThemeApply();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [chromeVisible, setChromeVisible] = useState(true);
   const location = useLocation();
+
+  const isTimerRoute = location.pathname === "/" || location.pathname.startsWith("/countdown") || location.pathname === "/pomodoro";
+
+  // Auto-hide chrome after 3s of inactivity on timer routes
+  useEffect(() => {
+    if (!isTimerRoute || settingsOpen) return;
+    const timer = setTimeout(() => setChromeVisible(false), 3000);
+    return () => clearTimeout(timer);
+  }, [chromeVisible, isTimerRoute, settingsOpen]);
+
+  // Always show chrome on non-timer routes
+  useEffect(() => {
+    if (!isTimerRoute) setChromeVisible(true);
+  }, [isTimerRoute]);
+
+  const handleScreenTap = useCallback(() => {
+    if (!isTimerRoute) return;
+    setChromeVisible((v) => !v);
+  }, [isTimerRoute]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -33,11 +53,18 @@ const Index = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background">
-      <NavBar
-        onSettingsClick={() => setSettingsOpen(true)}
-        onFullscreen={toggleFullscreen}
-      />
+    <div
+      className="relative flex min-h-screen flex-col items-center justify-center bg-background"
+      onClick={handleScreenTap}
+    >
+      <div
+        className={`transition-all duration-500 ${chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"}`}
+      >
+        <NavBar
+          onSettingsClick={() => { setSettingsOpen(true); setChromeVisible(true); }}
+          onFullscreen={toggleFullscreen}
+        />
+      </div>
 
       <main className="flex flex-1 items-center justify-center px-4">
         <Routes>
@@ -50,7 +77,7 @@ const Index = () => {
         </Routes>
       </main>
 
-      <footer className="pb-4 text-center">
+      <footer className={`pb-4 text-center transition-all duration-500 ${chromeVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-full pointer-events-none"}`}>
         <p className="text-xs text-muted-foreground/50 tracking-wider">HIFOCUS</p>
       </footer>
 
